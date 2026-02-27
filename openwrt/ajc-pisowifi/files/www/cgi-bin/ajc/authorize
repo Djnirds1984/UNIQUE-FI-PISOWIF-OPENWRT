@@ -1,0 +1,10 @@
+#!/bin/sh
+echo "Content-Type: application/json"
+echo
+read -t 1 body
+mac=$(echo "$QUERY_STRING" | sed -n 's/.*mac=\([^&]*\).*/\1/p')
+sec=$(echo "$QUERY_STRING" | sed -n 's/.*sec=\([^&]*\).*/\1/p')
+[ -z "$mac" ] && mac=$(echo "$body" | sed -n 's/.*"mac":"\([^"]*\)".*/\1/p')
+[ -z "$sec" ] && sec=$(echo "$body" | sed -n 's/.*"seconds":\([^,}]*\).*/\1/p')
+/usr/lib/ajc/session.sh "$mac" "$sec"
+echo '{"success":true}'

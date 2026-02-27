@@ -1,0 +1,5 @@
+config ajc 'main'
+	option lan_if 'br-lan'
+	option portal_ip '192.168.1.1'
+	option portal_path '/www/ajc'
+	option set_name 'allow_macs'
