@@ -187,3 +187,46 @@ curl -sSL https://raw.githubusercontent.com/Djnirds1984/UNIQUE-FI-PISOWIF-OPENWR
 - Palitan ang `root@192.168.1.1` ayon sa setup mo
 - Gamitin ang `auto` para mag-download ng tamang SDK para sa ramips/mt7621 (mipsel_24kc)
 - O kaya'y ibigay ang sarili mong SDK path kung meron ka na
+
+## 11) Lightweight Installation (Para sa Router na Mababa ang Storage)
+
+Para sa mga router na kulang sa storage space (gaya ng error: "Only have 6808kb available"), gamitin ang lightweight installation:
+
+### Option A: Lightweight Install (Build sa PC, transfer .ipk file lang)
+```bash
+# Gamitin ang build machine mo (Ubuntu/Debian PC)
+curl -sSL https://raw.githubusercontent.com/Djnirds1984/UNIQUE-FI-PISOWIF-OPENWRT/main/scripts/lightweight-install.sh | bash -s -- auto root@192.168.1.1
+```
+
+### Option B: Ultra-lightweight Install (Mas maliit na package)
+```bash
+# Para sa sobrang kulang sa storage
+curl -sSL https://raw.githubusercontent.com/Djnirds1984/UNIQUE-FI-PISOWIF-OPENWRT/main/scripts/ultra-lightweight-install.sh | bash -s -- auto root@192.168.1.1
+```
+
+### Manual Transfer (Kung gusto mo ng manual control)
+```bash
+# 1. Build sa PC mo
+git clone https://github.com/Djnirds1984/UNIQUE-FI-PISOWIF-OPENWRT.git
+cd UNIQUE-FI-PISOWIF-OPENWRT
+bash scripts/openwrt-sdk-build.sh auto  # Build lang, no install
+
+# 2. Hanapin ang .ipk file
+find ~/openwrt-sdk-ramips-mt7621/*/bin/packages -name '*ajc*.ipk'
+
+# 3. I-transfer sa router
+scp /path/to/ajc-pisowifi*.ipk root@192.168.1.1:/tmp/
+
+# 4. I-install sa router
+ssh root@192.168.1.1
+opkg update
+opkg install /tmp/ajc-pisowifi*.ipk
+/etc/init.d/ajc enable
+/etc/init.d/ajc start
+```
+
+### Storage Tips:
+- **Free up space**: `opkg remove ppp ppp-mod-pppoe kmod-ppp kmod-pppoe kmod-pppox` (kung hindi mo ginagamit)
+- **Check storage**: `df -h /overlay`
+- **List big packages**: `opkg list-installed | xargs opkg info | grep -E "Package:|Size:" | awk '/Package:/ {pkg=$2} /Size:/ {print pkg, $2}' | sort -k2 -nr`
+- **Minimal edition**: ~50KB lang ang ultra-lightweight package
