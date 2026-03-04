@@ -1,0 +1,113 @@
+# OpenWrt Installation Guide (Ruijie RG‑EW1200G PRO v1/v1.1)
+
+This guide explains how to:
+- Flash OpenWrt on the Ruijie RG‑EW1200G PRO v1/v1.1
+- Build and install the ajc-pisowifi captive portal/session controller package
+- Configure and verify the captive portal and client authorization
+
+## 1) Flash OpenWrt on the Router
+
+Prerequisites:
+- The correct OpenWrt image for ramips/mt7621 and your exact hardware revision
+- Access to the router shell on stock firmware (root)
+
+Typical flashing steps (adjust to the instructions for your model):
+1. On your PC, serve the firmware file:
+   - `python -m http.server` in the directory containing `factory.bin`
+2. On the router:
+   - `cd /tmp`
+   - `wget http://<PC_IP>:8000/factory.bin`
+   - `mtd -r write factory.bin firmware`
+3. After reboot, access OpenWrt at `http://192.168.1.1` and set a root password.
+
+Notes:
+- The RG‑EW1200G PRO v1.1 is officially supported; verify exact variant in the OpenWrt Hardware DB.
+- Always follow device-specific installation notes from OpenWrt.
+
+## 2) Build the ajc-pisowifi Package (.ipk)
+
+Use the OpenWrt SDK that matches ramips/mt7621 (mipsel_24kc):
+1. Download and extract the OpenWrt SDK for your target.
+2. Copy the package sources into the SDK:
+   - Place the folder `openwrt/ajc-pisowifi` into `package/ajc-pisowifi` inside the SDK.
+     - Package Makefile: [openwrt/ajc-pisowifi/Makefile](file:///c:/Users/Administrator/Documents/GitHub/UNIQUE-FI-PISOWIF-OPENWRT/openwrt/ajc-pisowifi/Makefile)
+     - Init script: [files/etc/init.d/ajc](file:///c:/Users/Administrator/Documents/GitHub/UNIQUE-FI-PISOWIF-OPENWRT/openwrt/ajc-pisowifi/files/etc/init.d/ajc)
+     - UCI config: [files/etc/config/ajc](file:///c:/Users/Administrator/Documents/GitHub/UNIQUE-FI-PISOWIF-OPENWRT/openwrt/ajc-pisowifi/files/etc/config/ajc)
+     - Setup/session: [files/usr/lib/ajc/setup.sh](file:///c:/Users/Administrator/Documents/GitHub/UNIQUE-FI-PISOWIF-OPENWRT/openwrt/ajc-pisowifi/files/usr/lib/ajc/setup.sh), [files/usr/lib/ajc/session.sh](file:///c:/Users/Administrator/Documents/GitHub/UNIQUE-FI-PISOWIF-OPENWRT/openwrt/ajc-pisowifi/files/usr/lib/ajc/session.sh)
+     - Portal/CGI: [files/www/ajc/index.html](file:///c:/Users/Administrator/Documents/GitHub/UNIQUE-FI-PISOWIF-OPENWRT/openwrt/ajc-pisowifi/files/www/ajc/index.html), [files/www/cgi-bin/ajc/authorize](file:///c:/Users/Administrator/Documents/GitHub/UNIQUE-FI-PISOWIF-OPENWRT/openwrt/ajc-pisowifi/files/www/cgi-bin/ajc/authorize)
+3. Update and install feeds in the SDK:
+   - `./scripts/feeds update -a`
+   - `./scripts/feeds install -a`
+4. Select the target and package:
+   - `make menuconfig`
+   - Target System: MediaTek Ralink MIPS
+   - Subtarget: MT7621
+   - Select Network → `ajc-pisowifi`
+5. Build the package:
+   - `make package/ajc-pisowifi/compile V=s`
+6. Locate the generated `.ipk` under `bin/packages/mipsel_24kc/`.
+
+## 3) Install the Package on OpenWrt
+
+1. Copy the `.ipk` to your router (e.g., `scp` to `/tmp`).
+2. SSH into the router, then:
+   - `opkg update`
+   - `opkg install /tmp/ajc-pisowifi_*.ipk`
+3. Enable and start the service:
+   - `/etc/init.d/ajc enable`
+   - `/etc/init.d/ajc start`
+
+Dependencies (`uhttpd`, `nftables`) are automatically pulled in by the package.
+
+## 4) Configure via UCI (Optional)
+
+Default configuration file:
+- [openwrt/ajc-pisowifi/files/etc/config/ajc](file:///c:/Users/Administrator/Documents/GitHub/UNIQUE-FI-PISOWIF-OPENWRT/openwrt/ajc-pisowifi/files/etc/config/ajc)
+
+Common adjustments:
+- `uci set ajc.main.lan_if='br-lan'`
+- `uci set ajc.main.portal_ip='192.168.1.1'`
+- `uci commit ajc`
+- `/etc/init.d/ajc restart`
+
+## 5) Verify Captive Portal and Authorization
+
+Captive portal:
+- Connect a LAN client and visit `http://192.168.1.1/ajc/`
+
+Authorize a client by MAC for N seconds:
+- HTTP:
+  - `http://192.168.1.1/cgi-bin/ajc/authorize?mac=AA:BB:CC:DD:EE:FF&sec=1800`
+- Shell:
+  - `/usr/lib/ajc/session.sh AA:BB:CC:DD:EE:FF 1800`
+
+Inspect nft ruleset:
+- `nft list ruleset | grep ajc`
+
+## 6) Optional: Include in Custom Firmware (ImageBuilder)
+
+Using the ImageBuilder for ramips/mt7621:
+1. Place your built `.ipk` in ImageBuilder’s `packages/` directory.
+2. Build an image with:
+   - `make image PROFILE=<your_device_profile> PACKAGES="ajc-pisowifi uhttpd nftables"`
+
+## Troubleshooting
+
+- No redirect:
+  - Ensure `lan_if` matches your LAN bridge (`br-lan`) and `portal_ip` is correct.
+  - Reload firewall: `/etc/init.d/firewall reload`
+  - Check rules: `nft list ruleset`
+- CGI not found:
+  - Check that `uhttpd` is running and files exist under `/www/cgi-bin/ajc/authorize`.
+- MAC parsing issues:
+  - Use uppercase MAC with colons (e.g., `AA:BB:CC:DD:EE:FF`).
+
+## Uninstall / Disable
+
+- Stop and disable service:
+  - `/etc/init.d/ajc stop`
+  - `/etc/init.d/ajc disable`
+- Remove rules and package:
+  - `rm -f /etc/nftables.d/ajc.nft && /etc/init.d/firewall reload`
+  - `opkg remove ajc-pisowifi`
+
