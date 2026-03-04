@@ -169,10 +169,21 @@ Para one‑command build at optional install, gamitin:
 - One‑liner (clone + run):
   - `git clone https://github.com/Djnirds1984/UNIQUE-FI-PISOWIF-OPENWRT.git && cd UNIQUE-FI-PISOWIF-OPENWRT && BRANCH=main bash scripts/install.sh /path/to/openwrt-sdk root@192.168.1.1`
 
-## 10) One‑click Bootstrap Link
+## 10) One‑click Bootstrap Link (with Auto SDK Download)
 
 - Raw URL ng one‑click script:
   - `https://raw.githubusercontent.com/Djnirds1984/UNIQUE-FI-PISOWIF-OPENWRT/main/scripts/oneclick.sh`
-- One‑liner:
-  - `curl -sSL https://raw.githubusercontent.com/Djnirds1984/UNIQUE-FI-PISOWIF-OPENWRT/main/scripts/oneclick.sh | bash -s -- /path/to/openwrt-sdk root@192.168.1.1`
-- Palitan ang `/path/to/openwrt-sdk` at `root@192.168.1.1` ayon sa setup mo.
+
+### Zero-config option (auto-downloads SDK):
+```bash
+curl -sSL https://raw.githubusercontent.com/Djnirds1984/UNIQUE-FI-PISOWIF-OPENWRT/main/scripts/oneclick.sh | bash -s -- auto root@192.168.1.1
+```
+
+### Manual SDK path option:
+```bash
+curl -sSL https://raw.githubusercontent.com/Djnirds1984/UNIQUE-FI-PISOWIF-OPENWRT/main/scripts/oneclick.sh | bash -s -- /path/to/openwrt-sdk root@192.168.1.1
+```
+
+- Palitan ang `root@192.168.1.1` ayon sa setup mo
+- Gamitin ang `auto` para mag-download ng tamang SDK para sa ramips/mt7621 (mipsel_24kc)
+- O kaya'y ibigay ang sarili mong SDK path kung meron ka na
