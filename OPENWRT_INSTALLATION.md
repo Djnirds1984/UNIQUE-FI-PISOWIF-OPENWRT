@@ -230,3 +230,102 @@ opkg install /tmp/ajc-pisowifi*.ipk
 - **Check storage**: `df -h /overlay`
 - **List big packages**: `opkg list-installed | xargs opkg info | grep -E "Package:|Size:" | awk '/Package:/ {pkg=$2} /Size:/ {print pkg, $2}' | sort -k2 -nr`
 - **Minimal edition**: ~50KB lang ang ultra-lightweight package
+
+## 12) Paano Mag-copy ng Files sa OpenWrt gamit ang MobaXterm
+
+### Method 1: MobaXterm Built-in File Manager (Pinakamadali)
+
+1. **I-connect ang MobaXterm sa OpenWrt**:
+   - Buksan ang MobaXterm
+   - Click ang "Session" button
+   - Piliin ang "SSH"
+   - Ilagay ang IP address ng OpenWrt (hal. 192.168.1.1)
+   - Ilagay ang username (karaniwan: `root`)
+   - Click "OK" para mag-connect
+
+2. **Gamitin ang File Manager**:
+   - Sa left side ng MobaXterm, makikita mo ang "SFTP" tab
+   - Auto-magically lalabas ito pag nakaconnect ka na sa SSH
+   - Makikita mo ang file system ng OpenWrt sa left panel
+   - Drag-and-drop lang ang files galing PC papunta sa OpenWrt
+   - Or right-click → "Upload" para pumili ng files
+
+### Method 2: SCP Command sa MobaXterm Terminal
+
+```bash
+# Copy single file
+scp C:\Users\YourName\Downloads\file.txt root@192.168.1.1:/tmp/
+
+# Copy multiple files
+scp C:\Users\YourName\Downloads\*.ipk root@192.168.1.1:/tmp/
+
+# Copy folder with contents
+scp -r C:\Users\YourName\Documents\myfolder root@192.168.1.1:/root/
+
+# Copy with specific port (kung iba ang SSH port)
+scp -P 2222 C:\file.txt root@192.168.1.1:/tmp/
+```
+
+### Method 3: Drag-and-Drop sa Terminal
+
+1. I-connect sa SSH gamit ang MobaXterm
+2. Sa Windows Explorer, i-drag ang files mo
+3. I-drop sa MobaXterm terminal window
+4. Auto-magically mag-ge-generate ng scp command
+
+### Method 4: WinSCP Integration (Alternative)
+
+Kung gusto mo ng dedicated GUI:
+1. Download WinSCP
+2. Same na connection settings (SSH, IP, username)
+3. Mas advanced na file manager interface
+
+### Common File Locations sa OpenWrt:
+
+```bash
+/tmp/           # Temporary files, safe para sa uploads
+/root/          # Root user home directory
+/etc/           # Configuration files
+/www/           # Web server files (para sa captive portal)
+/lib/           # Library files
+```
+
+### Tips para sa MobaXterm File Transfer:
+
+1. **Para sa ajc-pisowifi files**:
+   ```bash
+   # Upload ang built .ipk file
+   scp C:\path\to\ajc-pisowifi*.ipk root@192.168.1.1:/tmp/
+   
+   # Then install sa router
+   ssh root@192.168.1.1
+   opkg install /tmp/ajc-pisowifi*.ipk
+   ```
+
+2. **Para sa configuration files**:
+   ```bash
+   # Backup current config
+   scp root@192.168.1.1:/etc/config/network C:\backup\
+   
+   # Upload new config
+   scp C:\myconfig\network root@192.168.1.1:/etc/config/
+   ```
+
+3. **Check file size before transfer**:
+   ```bash
+   # Sa OpenWrt side
+   ls -lh /tmp/filename
+   df -h /overlay
+   ```
+
+### Troubleshooting:
+
+- **Connection refused**: Check kung tama ang IP at kung naka-enable ang SSH
+- **Permission denied**: Make sure tama ang username (usually `root`)
+- **No space left**: Check storage gamit ang `df -h`
+- **Slow transfer**: Normal sa SSH, gamitin ang `-C` flag para sa compression
+
+### MobaXterm Shortcuts:
+- **Ctrl+Shift+F**: Open file browser
+- **Ctrl+Alt+F**: SFTP panel toggle
+- **Right-click**: Context menu sa files
