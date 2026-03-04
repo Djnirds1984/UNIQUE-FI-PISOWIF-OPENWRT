@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>Piso WiFi Portal</title>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <link rel="stylesheet" href="./styles.css">
+  <meta name="color-scheme" content="dark light">
+</head>
+<body>
+  <main class="container">
+    <section class="card">
+      <h1>Piso WiFi</h1>
+      <div id="status" class="status">Disconnected</div>
+      <div id="time" class="time">Time Remaining: 00:00</div>
+      <div class="actions">
+        <button id="coinBtn" class="btn">Insert Coin</button>
+      </div>
+      <div class="voucher">
+        <input id="voucherCode" type="text" inputmode="text" placeholder="Voucher Code">
+        <button id="redeemBtn" class="btn primary">Redeem</button>
+      </div>
+      <div id="message" class="message"></div>
+    </section>
+    <footer class="foot">Powered by Supabase</footer>
+  </main>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="./app.js"></script>
+  <noscript>Enable JavaScript to use the portal.</noscript>
+  <div id="env" data-url="" data-key="" hidden></div>
+  <script>
+    ;(function(){
+      var el=document.getElementById('env');
+      var u=el.getAttribute('data-url');
+      var k=el.getAttribute('data-key');
+      if(!u||!k){console.warn('Set env data-url and data-key on #env');}
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>Provider Admin Panel</title>
+  <link rel="stylesheet" href="../portal/styles.css">
+</head>
+<body>
+  <main class="container">
+    <section class="card" id="authCard">
+      <h1>Provider Login</h1>
+      <div class="voucher" style="margin-top:8px">
+        <input id="email" type="email" placeholder="Email">
+      </div>
+      <div class="voucher" style="margin-top:8px">
+        <input id="password" type="password" placeholder="Password">
+      </div>
+      <div class="actions" style="margin-top:8px">
+        <button id="loginBtn" class="btn primary">Login</button>
+      </div>
+      <div id="authMsg" class="message"></div>
+    </section>
+
+    <section class="card" id="panel" style="display:none">
+      <h1>Licenses</h1>
+      <div class="voucher" style="margin:8px 0">
+        <select id="buyerSelect"></select>
+      </div>
+      <div class="voucher" style="margin:8px 0">
+        <select id="machineSelect"><option value="">(Optional) Bind to Machine</option></select>
+      </div>
+      <div class="voucher" style="margin:8px 0">
+        <input id="expiresAt" type="datetime-local">
+        <button id="genBtn" class="btn primary">Generate Key</button>
+      </div>
+      <div id="genMsg" class="message"></div>
+      <div style="margin-top:12px">
+        <div id="licenses"></div>
+      </div>
+    </section>
+
+    <section class="card" id="machinesCard" style="display:none">
+      <h1>Active Machines</h1>
+      <div id="activeMachines" class="message"></div>
+    </section>
+  </main>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="./app.js"></script>
+</body>
+</html>
