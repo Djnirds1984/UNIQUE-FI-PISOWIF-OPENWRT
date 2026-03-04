@@ -14,7 +14,7 @@ table inet ajc {
  set $set_name { type ether_addr; flags timeout; }
  chain prerouting {
   type nat hook prerouting priority -100;
-  iifname "$lan_if" tcp dport 80 ether saddr != @$set_name dnat to $portal_ip:80
+  iifname "$lan_if" tcp dport 80 ether saddr != @$set_name dnat ip to $portal_ip:80
  }
  chain forward {
   type filter hook forward priority 0;
@@ -27,10 +27,11 @@ EOF
 case "$1" in
  start)
   generate
-  /etc/init.d/firewall reload >/dev/null 2>&1 || true
+  nft delete table inet ajc >/dev/null 2>&1 || true
+  nft -f "$nft_file"
  ;;
  stop)
   rm -f "$nft_file"
-  /etc/init.d/firewall reload >/dev/null 2>&1 || true
+  nft delete table inet ajc >/dev/null 2>&1 || true
  ;;
 esac
