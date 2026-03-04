@@ -111,3 +111,29 @@ Using the ImageBuilder for ramips/mt7621:
   - `rm -f /etc/nftables.d/ajc.nft && /etc/init.d/firewall reload`
   - `opkg remove ajc-pisowifi`
 
+## 7) Pag-pull mula sa Git Repository (UNIQUE-FI-PISOWIF-OPENWRT)
+
+Repository URL:
+- `https://github.com/Djnirds1984/UNIQUE-FI-PISOWIF-OPENWRT.git`
+
+Karaniwang daloy (OpenWrt SDK build machine — Linux/macOS):
+1. Clone ang repository:
+   - `git clone https://github.com/Djnirds1984/UNIQUE-FI-PISOWIF-OPENWRT.git`
+   - `cd UNIQUE-FI-PISOWIF-OPENWRT`
+2. Kopyahin ang package papunta sa SDK:
+   - `cp -r openwrt/ajc-pisowifi /path/to/openwrt-sdk/package/ajc-pisowifi`
+3. Sa SDK:
+   - `./scripts/feeds update -a && ./scripts/feeds install -a`
+   - `make menuconfig` (piliin ramips/mt7621 at ajc-pisowifi)
+   - `make package/ajc-pisowifi/compile V=s`
+4. I-install ang nabuo na `.ipk` sa router:
+   - `scp bin/packages/mipsel_24kc/*/ajc-pisowifi_*.ipk root@192.168.1.1:/tmp/`
+   - `ssh root@192.168.1.1 "opkg update && opkg install /tmp/ajc-pisowifi_*.ipk && /etc/init.d/ajc enable && /etc/init.d/ajc start"`
+
+Pag-update mula sa repo at rebuild:
+1. Sa cloned repo:
+   - `git pull origin main`
+2. Ulitin ang copy papunta sa SDK at `make package/ajc-pisowifi/compile V=s`
+3. I-upgrade sa router:
+   - `opkg install --force-reinstall /tmp/ajc-pisowifi_*.ipk`
+   - `/etc/init.d/ajc restart`
