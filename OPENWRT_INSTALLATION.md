@@ -137,3 +137,13 @@ Pag-update mula sa repo at rebuild:
 3. I-upgrade sa router:
    - `opkg install --force-reinstall /tmp/ajc-pisowifi_*.ipk`
    - `/etc/init.d/ajc restart`
+
+## 8) Automation: Build Helper Script
+
+Pwede mong patakbuhin ang helper script para awtomatikong kopya/build at optional install sa router:
+- Script path: [scripts/openwrt-sdk-build.sh](file:///c:/Users/Administrator/Documents/GitHub/UNIQUE-FI-PISOWIF-OPENWRT/scripts/openwrt-sdk-build.sh)
+- Usage:
+  - `bash scripts/openwrt-sdk-build.sh /path/to/openwrt-sdk`
+  - `bash scripts/openwrt-sdk-build.sh /path/to/openwrt-sdk root@192.168.1.1`
+  - Unang argumento: path ng OpenWrt SDK
+  - Ikalawang argumento (optional): router SSH target (`root@<ip>`) para auto‑install
