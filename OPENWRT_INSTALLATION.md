@@ -147,3 +147,32 @@ Pwede mong patakbuhin ang helper script para awtomatikong kopya/build at optiona
   - `bash scripts/openwrt-sdk-build.sh /path/to/openwrt-sdk root@192.168.1.1`
   - Unang argumento: path ng OpenWrt SDK
   - Ikalawang argumento (optional): router SSH target (`root@<ip>`) para auto‑install
+
+## 9) Quick Install Script
+
+Para one‑command build at optional install, gamitin:
+- Script path: [scripts/install.sh](file:///c:/Users/Administrator/Documents/GitHub/UNIQUE-FI-PISOWIF-OPENWRT/scripts/install.sh)
+- Usage:
+  - `bash scripts/install.sh /path/to/openwrt-sdk`
+  - `bash scripts/install.sh /path/to/openwrt-sdk root@192.168.1.1`
+- Optional:
+  - `BRANCH=main bash scripts/install.sh /path/to/openwrt-sdk root@192.168.1.1`
+  - `BRANCH` controls kung aling branch ang i-pu-pull bago mag-build.
+
+### Direct Link (GitHub Raw)
+- Raw URL ng install script:
+  - `https://raw.githubusercontent.com/Djnirds1984/UNIQUE-FI-PISOWIF-OPENWRT/main/scripts/install.sh`
+- Inirerekomenda: patakbuhin ang script mula sa cloned repo para mahanap ang helper scripts at sources:
+  - `git clone https://github.com/Djnirds1984/UNIQUE-FI-PISOWIF-OPENWRT.git`
+  - `cd UNIQUE-FI-PISOWIF-OPENWRT`
+  - `bash scripts/install.sh /path/to/openwrt-sdk root@192.168.1.1`
+- One‑liner (clone + run):
+  - `git clone https://github.com/Djnirds1984/UNIQUE-FI-PISOWIF-OPENWRT.git && cd UNIQUE-FI-PISOWIF-OPENWRT && BRANCH=main bash scripts/install.sh /path/to/openwrt-sdk root@192.168.1.1`
+
+## 10) One‑click Bootstrap Link
+
+- Raw URL ng one‑click script:
+  - `https://raw.githubusercontent.com/Djnirds1984/UNIQUE-FI-PISOWIF-OPENWRT/main/scripts/oneclick.sh`
+- One‑liner:
+  - `curl -sSL https://raw.githubusercontent.com/Djnirds1984/UNIQUE-FI-PISOWIF-OPENWRT/main/scripts/oneclick.sh | bash -s -- /path/to/openwrt-sdk root@192.168.1.1`
+- Palitan ang `/path/to/openwrt-sdk` at `root@192.168.1.1` ayon sa setup mo.
